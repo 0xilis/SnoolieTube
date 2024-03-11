@@ -112,15 +112,48 @@ NSString* downloadVideo(NSString* videoIdOfVideo, NSString *quality, NSString *a
     //NSString *downloadType = @"video"; //for audio do @"audio"
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSDictionary *user = [[NSDictionary alloc]initWithObjectsAndKeys:[NSNumber numberWithBool:NO],@"lockedSafetyMode", nil];
-    NSDictionary *darequest = [[NSDictionary alloc]initWithObjectsAndKeys:[NSNumber numberWithBool:YES],@"useSsl",[NSArray array],@"internalExperimentFlags",[NSArray array],@"consistencyTokenJars",nil];
-    NSDictionary *contentPlaybackContext = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithInt:0],@"vis",[NSNumber numberWithBool:NO],@"splay",[NSNumber numberWithBool:NO],@"autoCaptionsDefaultOn",@"STATE_NONE",@"autonavState",@"HTML5_PREF_WANTS",@"html5Preference",@"-1",@"lactMilliseconds",nil];
-    NSDictionary *client = [[NSDictionary alloc]initWithObjectsAndKeys:@"en",@"hl",@"IOS",@"clientName",@"17.33.2",@"clientVersion",@"iPhone14,3",@"deviceModel",[[NSDictionary alloc]initWithObjectsAndKeys:videoUrlWithId,@"graftUrl",@"WEB_DISPLAY_MODE_BROWSER",@"webDisplayMode",nil],@"mainAppWebInfo",user,@"user",darequest,@"request",nil];
-    NSDictionary *context = [[NSDictionary alloc] initWithObjectsAndKeys:client,@"client",videoIdOfVideo,@"videoId",[[NSDictionary alloc]initWithObjectsAndKeys:contentPlaybackContext,@"contentPlaybackContext",nil],@"playbackContext",[NSNumber numberWithBool:YES],@"racyCheckOk",[NSNumber numberWithBool:YES],@"contentCheckOk",nil];
-    NSDictionary *tmp = [[NSDictionary alloc] initWithObjectsAndKeys:
-                         context, @"context",
-                         videoIdOfVideo, @"videoId",
-                         nil];
+    NSDictionary *user = @{
+        @"lockedSafetyMode" : @NO,
+    };
+    NSDictionary *darequest = @{
+        @"useSsl" : @YES,
+        @"internalExperimentFlags" : @[],
+        @"consistencyTokenJars" : @[],
+    };
+    
+    NSDictionary *contentPlaybackContext = @{
+        @"vis" : @0,
+        @"splay" : @NO,
+        @"autoCaptionsDefaultOn" : @NO,
+        @"autonavState" : @"STATE_NONE",
+        @"html5Preference" : @"HTML5_PREF_WANTS",
+        @"lactMilliseconds" : @"-1",
+    };
+    NSDictionary *client = @{
+        @"hl" : @"en",
+        @"clientName" : @"IOS",
+        @"clientVersion" : @"17.33.2",
+        @"deviceModel" : @"iPhone14,3",
+        @"mainAppWebInfo" : @{
+            @"graftURL" : videoUrlWithId,
+            @"webDisplayMode" : @"WEB_DISPLAY_MODE_BROWSER",
+        },
+        @"user" : user,
+        @"request" : darequest,
+    };
+    NSDictionary *context = @{
+        @"client" : client,
+        @"videoId" : videoIdOfVideo,
+        @"playbackContext" : @{
+            @"contentPlaybackContext" : contentPlaybackContext,
+        },
+        @"racyCheckOk" : @YES,
+        @"contentCheckOk" : @YES,
+    };
+    NSDictionary *tmp = @{
+        @"context" : context,
+        @"videoId" : videoIdOfVideo,
+    };
     NSError *error;
     NSData *postData = [NSJSONSerialization dataWithJSONObject:tmp options:0 error:&error];
     [request setHTTPMethod:@"POST"];
