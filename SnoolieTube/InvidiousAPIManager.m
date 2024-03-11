@@ -104,55 +104,32 @@ NSString* OLD_downloadVideo(NSString* videoIdOfVideo, NSString *quality, NSStrin
     return @"Error with getting video download URL";
 }
 
-NSString* downloadVideo(NSString* videoIdOfVideo, NSString *quality, NSString *audioQuality, NSString *downloadType) {
-    //NSString *videoIdOfVideo = @"WO2b03Zdu4Q";
-    NSString *videoUrlWithId = [NSString stringWithFormat:@"/watch?v=%@", videoIdOfVideo];
-    //NSString *quality = @"1080p60";
-    //NSString *audioQuality = @"AUDIO_QUALITY_MEDIUM";
-    //NSString *downloadType = @"video"; //for audio do @"audio"
+NSString* downloadVideo(NSString* videoIdOfVideo) {
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSDictionary *user = @{
-        @"lockedSafetyMode" : @NO,
+    NSDictionary *cpbContext = @{
+      @"signatureTimestamp": @"sts",
+      @"html5Preference": @"HTML5_PREF_WANTS",
     };
-    NSDictionary *darequest = @{
-        @"useSsl" : @YES,
-        @"internalExperimentFlags" : @[],
-        @"consistencyTokenJars" : @[],
-    };
-    
-    NSDictionary *contentPlaybackContext = @{
-        @"vis" : @0,
-        @"splay" : @NO,
-        @"autoCaptionsDefaultOn" : @NO,
-        @"autonavState" : @"STATE_NONE",
-        @"html5Preference" : @"HTML5_PREF_WANTS",
-        @"lactMilliseconds" : @"-1",
+    NSDictionary *pbContext = @{
+      @"contentPlaybackContext": cpbContext
     };
     NSDictionary *client = @{
         @"hl" : @"en",
+        @"gl" : @"US",
         @"clientName" : @"IOS",
         @"clientVersion" : @"17.33.2",
         @"deviceModel" : @"iPhone14,3",
-        @"mainAppWebInfo" : @{
-            @"graftURL" : videoUrlWithId,
-            @"webDisplayMode" : @"WEB_DISPLAY_MODE_BROWSER",
-        },
-        @"user" : user,
-        @"request" : darequest,
+        @"playbackContext": pbContext
     };
     NSDictionary *context = @{
         @"client" : client,
-        @"videoId" : videoIdOfVideo,
-        @"playbackContext" : @{
-            @"contentPlaybackContext" : contentPlaybackContext,
-        },
-        @"racyCheckOk" : @YES,
-        @"contentCheckOk" : @YES,
     };
     NSDictionary *tmp = @{
         @"context" : context,
         @"videoId" : videoIdOfVideo,
+        @"racyCheckOk" : @YES,
+        @"contentCheckOk" : @YES,
     };
     NSError *error;
     NSData *postData = [NSJSONSerialization dataWithJSONObject:tmp options:0 error:&error];

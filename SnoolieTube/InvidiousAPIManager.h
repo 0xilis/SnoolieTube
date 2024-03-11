@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface InvidiousAPIManager : NSObject
 +(NSDictionary *)search:(NSString *)text;
-NSString* downloadVideo(NSString* videoIdOfVideo, NSString *quality, NSString *audioQuality, NSString *downloadType);
+NSString* downloadVideo(NSString* videoIdOfVideo);
 @end
 
 NS_ASSUME_NONNULL_END

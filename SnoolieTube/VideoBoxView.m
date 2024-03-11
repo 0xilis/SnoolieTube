@@ -75,7 +75,7 @@
     NSString *videoId = _videoId;
     if (videoId) {
         NSLog(@"Getting video URL...\n");
-        NSString *videoURLString = downloadVideo(videoId, 0, @"AUDIO_QUALITY_MEDIUM", @"video");
+        NSString *videoURLString = downloadVideo(videoId);
         NSURL *videoURL = [NSURL URLWithString:videoURLString];
         NSLog(@"videoURLString: %@",videoURLString);
         NSLog(@"videoURL: %@",videoURL);
