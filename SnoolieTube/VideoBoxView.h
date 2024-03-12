@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(instancetype) initDebugWithFrame:(CGRect)frame;
 +(CGFloat)thumbnailToLabelHeightRatio;
 @property (nonatomic, readwrite) NSString *videoId;
+-(instancetype)initWithFrame:(CGRect)frame;
+-(void)changeThumbnail:(UIImage *)img;
 @end
 
 NS_ASSUME_NONNULL_END

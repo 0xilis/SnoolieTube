@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VideoBoxScrollView : UIScrollView
 
-@property (readwrite) NSArray <VideoBoxView *>*videoBoxes;
+@property (readwrite) NSMutableArray <VideoBoxView *>*videoBoxes;
 @property (readwrite) UISearchBar *searchBar;
-+(void)addVideoBox:(VideoBoxView *)videoBox;
+-(void)addVideoBox:(VideoBoxView *)videoBox;
 -(instancetype)initWithFrame:(CGRect)frame;
 @end
 

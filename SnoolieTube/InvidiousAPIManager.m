@@ -34,6 +34,11 @@
     });
     return responseDict;
 }
++(void)hlsURLWithVideoId:(NSString *)videoIdOfVideo completion:(void(^)(NSString *hlsURL))comp {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        comp(downloadVideo(videoIdOfVideo));
+    });
+}
 @end
 
 
@@ -116,7 +121,7 @@ NSString* downloadVideo(NSString* videoIdOfVideo) {
     };
     NSDictionary *client = @{
         @"hl" : @"en",
-        @"gl" : @"US",
+        @"gl" : @"KP",
         @"clientName" : @"IOS",
         @"clientVersion" : @"17.33.2",
         @"deviceModel" : @"iPhone14,3",
@@ -140,7 +145,7 @@ NSString* downloadVideo(NSString* videoIdOfVideo) {
     NSHTTPURLResponse *responseCode = nil;
     
     
-    NSLog(@"Our data we're sending: %@",tmp);
+    //NSLog(@"Our data we're sending: %@",tmp);
     
     [request setValue:@"application/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"*" forHTTPHeaderField:@"Access-Control-Allow-Origin"];
@@ -150,6 +155,6 @@ NSString* downloadVideo(NSString* videoIdOfVideo) {
     
     //NSLog(@"Hello, World!");
     NSDictionary* responseDict = [NSJSONSerialization JSONObjectWithData:oResponseData options:kNilOptions error:&error];
-    NSLog(@"YouTube Response: %@",responseDict);
+    //NSLog(@"YouTube Response: %@",responseDict);
     return responseDict[@"streamingData"][@"hlsManifestUrl"];
 }
