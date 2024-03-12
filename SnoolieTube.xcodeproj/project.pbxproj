@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B011D9E72BA0B92200FCB7FE /* YTPlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = B011D9E62BA0B92200FCB7FE /* YTPlaylistController.m */; };
 		B0146A7C2B9AB6520029023B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B0146A7B2B9AB6520029023B /* AppDelegate.m */; };
 		B0146A822B9AB6520029023B /* HomeController.m in Sources */ = {isa = PBXBuildFile; fileRef = B0146A812B9AB6520029023B /* HomeController.m */; };
 		B0146A872B9AB6580029023B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B0146A862B9AB6580029023B /* Assets.xcassets */; };
@@ -20,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B011D9E52BA0B92200FCB7FE /* YTPlaylistController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTPlaylistController.h; sourceTree = "<group>"; };
+		B011D9E62BA0B92200FCB7FE /* YTPlaylistController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTPlaylistController.m; sourceTree = "<group>"; };
 		B0146A772B9AB6520029023B /* SnoolieTube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnoolieTube.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B0146A7A2B9AB6520029023B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B0146A7B2B9AB6520029023B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -71,6 +74,8 @@
 		B0146A792B9AB6520029023B /* SnoolieTube */ = {
 			isa = PBXGroup;
 			children = (
+				B011D9E52BA0B92200FCB7FE /* YTPlaylistController.h */,
+				B011D9E62BA0B92200FCB7FE /* YTPlaylistController.m */,
 				B0146A7A2B9AB6520029023B /* AppDelegate.h */,
 				B0146A7B2B9AB6520029023B /* AppDelegate.m */,
 				B0146A802B9AB6520029023B /* HomeController.h */,
@@ -162,6 +167,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B011D9E72BA0B92200FCB7FE /* YTPlaylistController.m in Sources */,
 				B0146A952B9AB8630029023B /* VideoBoxView.m in Sources */,
 				B0B394A32B9E324E00754F8B /* VideoBoxScrollView.m in Sources */,
 				B0146A822B9AB6520029023B /* HomeController.m in Sources */,

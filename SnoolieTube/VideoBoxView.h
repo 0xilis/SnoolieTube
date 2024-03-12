@@ -9,17 +9,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef enum VideoBoxType_t {
+    VideoBoxVideoType,
+    VideoBoxPlaylistType,
+} VideoBoxType;
+
 @interface VideoBoxView : UIView
 
 @property (nonatomic, readwrite) NSString *title;
 @property (readwrite) UILabel *titleView;
+@property (nonatomic, readwrite) NSString *subtitle; /* Either author, or if playlist, say playlist */
+@property (readwrite) UILabel *subtitleView;
 @property (readwrite) UIImageView *thumbnail;
+@property (readwrite) VideoBoxType boxType;
+@property (nonatomic, readwrite) NSString *videoId;
+@property (nonatomic, readwrite) NSString *playlistId;
 -(instancetype)initDebug;
--(instancetype)initDebugWithSize:(CGSize)size;
 +(CGFloat)defaultHeight;
 -(instancetype) initDebugWithFrame:(CGRect)frame;
 +(CGFloat)thumbnailToLabelHeightRatio;
-@property (nonatomic, readwrite) NSString *videoId;
 -(instancetype)initWithFrame:(CGRect)frame;
 -(void)changeThumbnail:(UIImage *)img;
 @end

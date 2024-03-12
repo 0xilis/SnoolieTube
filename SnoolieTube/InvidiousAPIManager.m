@@ -62,6 +62,28 @@
         comp([NSJSONSerialization JSONObjectWithData:oResponseData options:kNilOptions error:nil],error);
     });
 }
++(void)playlistWithId:(NSString *)playlistId completion:(void(^)(NSDictionary * _Nullable response, NSError * _Nullable err))comp {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        [request setHTTPMethod:@"GET"];
+        NSString *searchString = [NSString stringWithFormat:@"https://vid.puffyan.us/api/v1/playlists/%@",playlistId];
+        [request setURL:[NSURL URLWithString:searchString]];
+        NSError *error = nil;
+        NSHTTPURLResponse *responseCode = nil;
+        
+        [request setValue:@"application/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+        [request setValue:@"*" forHTTPHeaderField:@"Access-Control-Allow-Origin"];
+        
+        NSData *oResponseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&responseCode error:&error];
+            
+        if([responseCode statusCode] != 200){
+            NSLog(@"Error GET, HTTP status code %li", (long)[responseCode statusCode]);
+            comp(nil,error);
+        }
+        
+        comp([NSJSONSerialization JSONObjectWithData:oResponseData options:kNilOptions error:nil],error);
+    });
+}
 @end
 
 

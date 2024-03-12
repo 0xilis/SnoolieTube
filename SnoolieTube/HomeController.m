@@ -74,7 +74,18 @@
                             }
                         }
                     }
-                    [videos newVideoBoxWithTitle:content[@"title"] videoId:content[@"videoId"] thumbnailURL:videoURL];
+                    [videos newVideoBoxWithTitle:content[@"title"] videoId:content[@"videoId"] author:content[@"author"] thumbnailURL:videoURL];
+                    limitVideoBox--;
+                    if (!limitVideoBox) {
+                        return;
+                    }
+                } else if ([@"playlist" isEqualToString:type]) {
+                    NSURL *playlistThumbnailURL = nil;
+                    NSString *playlistThumbnailString = content[@"playlistThumbnail"];
+                    if (playlistThumbnailString) {
+                        playlistThumbnailURL = [NSURL URLWithString:playlistThumbnailString];
+                    }
+                    [videos newVideoBoxPlaylistWithTitle:content[@"title"] playlistId:content[@"playlistId"] thumbnailURL:playlistThumbnailURL];
                     limitVideoBox--;
                     if (!limitVideoBox) {
                         return;

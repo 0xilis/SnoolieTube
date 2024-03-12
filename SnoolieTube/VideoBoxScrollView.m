@@ -36,17 +36,19 @@
     }
     return combinedVideoSize;
 }
--(void)newVideoBoxWithTitle:(NSString *)title videoId:(NSString *)videoId thumbnailURL:(NSURL *)thumbnailURL {
+-(void)newVideoBoxWithTitle:(NSString *)title videoId:(NSString *)videoId author:(NSString *)author thumbnailURL:(NSURL *)thumbnailURL {
     [_pendingLabel setHidden:YES];
     /* thumbnailURL currently ignored */
     VideoBoxView *box = [[VideoBoxView alloc]initWithFrame:CGRectMake(0, [self please_dont_call_yourself_getYOffset], [self frame].size.width, [VideoBoxView defaultHeight])];
     [box setTitle:title];
     [box setVideoId:videoId];
+    [box setSubtitle:author];
     NSMutableArray *videoBoxes = _videoBoxes;
     if (!videoBoxes) {
         videoBoxes = [NSMutableArray new];
         _videoBoxes = videoBoxes;
     }
+    
     [videoBoxes addObject:box];
     [self addSubview:box];
     [self resizeForVideos];
@@ -56,6 +58,45 @@
             dispatch_async(dispatch_get_main_queue(), ^(void){
                 UIImage *thumbnailImage = [UIImage imageWithData:imageData];
                 [box changeThumbnail:thumbnailImage];
+            });
+        });
+    }
+}
+-(void)newVideoBoxPlaylistWithTitle:(NSString *)title playlistId:(NSString *)playlistId thumbnailURL:(NSURL *)thumbnailURL {
+    [_pendingLabel setHidden:YES];
+    /* thumbnailURL currently ignored */
+    VideoBoxView *box = [[VideoBoxView alloc]initWithFrame:CGRectMake(0, [self please_dont_call_yourself_getYOffset], [self frame].size.width, [VideoBoxView defaultHeight])];
+    [box setTitle:title];
+    [box setPlaylistId:playlistId];
+    [box setBoxType:VideoBoxPlaylistType];
+    [box setSubtitle:@"[Playlist]"];
+    NSMutableArray *videoBoxes = _videoBoxes;
+    if (!videoBoxes) {
+        videoBoxes = [NSMutableArray new];
+        _videoBoxes = videoBoxes;
+    }
+    
+    [videoBoxes addObject:box];
+    [self addSubview:box];
+    [self resizeForVideos];
+    if (thumbnailURL) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData *imageData = [NSData dataWithContentsOfURL:thumbnailURL];
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                UIImage *thumbnailImage = [UIImage imageWithData:imageData];
+                [box changeThumbnail:thumbnailImage];
+                UIImageView *thumbnail = [box thumbnail];
+                CGRect thumbnailFrame = [thumbnail frame];
+                CGFloat playlistLabelX = thumbnailFrame.size.width / 10;
+                CGFloat playlistLabelW = thumbnailFrame.size.width * 0.8;
+                UILabel *playlistLabel = [[UILabel alloc]initWithFrame:CGRectMake(playlistLabelX, thumbnailFrame.size.height / 4, playlistLabelW, thumbnailFrame.size.height / 2)];
+                
+                [playlistLabel setText:@"Playlist"];
+                [playlistLabel setTextAlignment:NSTextAlignmentCenter];
+                [playlistLabel setTextColor:[UIColor whiteColor]];
+                [playlistLabel setBackgroundColor:[UIColor blackColor]];
+                [[playlistLabel layer]setCornerRadius:5.0];
+                [thumbnail addSubview:playlistLabel];
             });
         });
     }

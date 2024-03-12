@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(NSDictionary *)search:(NSString *)text;
 +(void)search:(NSString *)text completion:(void(^)(NSArray * _Nullable response, NSError * _Nullable err))comp;
 +(void)hlsURLWithVideoId:(NSString *)videoIdOfVideo completion:(void(^)(NSString *hlsURL))comp;
++(void)playlistWithId:(NSString *)playlistId completion:(void(^)(NSDictionary * _Nullable response, NSError * _Nullable err))comp;
 NSString* downloadVideo(NSString* videoIdOfVideo);
 @end
 

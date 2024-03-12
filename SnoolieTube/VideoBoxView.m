@@ -10,6 +10,7 @@
 #import "WatchViewController.h"
 #import <AVKit/AVKit.h>
 #import "InvidiousAPIManager.h"
+#import "YTPlaylistController.h"
 
 @implementation VideoBoxView
 -(instancetype)init {
@@ -19,6 +20,8 @@
         self->_titleView = titleView;
         UIImageView *thumbnail = [[UIImageView alloc]init];
         self->_thumbnail = thumbnail;
+        UILabel *subtitleView = [[UILabel alloc]init];
+        self->_subtitleView = subtitleView;
         /*
          * TODO:
          * While thumbnail is not loaded, show just a blue square.
@@ -27,8 +30,10 @@
          * context that the thumbnail is not yet loaded.
          */
         [thumbnail setBackgroundColor:[UIColor blueColor]];
-        [self addSubview:titleView];
         [self addSubview:thumbnail];
+        [self addSubview:subtitleView];
+        [self addSubview:titleView];
+        self->_boxType = VideoBoxVideoType;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapped)];
         [self addGestureRecognizer:tap];
     }
@@ -46,15 +51,6 @@
         [self setBackgroundColor:[UIColor redColor]];
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapped)];
         [self addGestureRecognizer:tap];
-    }
-    return self;
-}
--(instancetype)initDebugWithSize:(CGSize)size {
-    self = [self initDebug];
-    if (self) {
-        [self setFrame:CGRectMake(0, 0, size.width, size.height)];
-        [self->_thumbnail setFrame:CGRectMake(0, 0, size.width, 20)];
-        [self->_titleView setFrame:CGRectMake(0, 20, size.width, 10)];
     }
     return self;
 }
@@ -90,6 +86,8 @@
         self->_titleView = titleView;
         UIImageView *thumbnail = [[UIImageView alloc]init];
         self->_thumbnail = thumbnail;
+        UILabel *subtitleView = [[UILabel alloc]init];
+        self->_subtitleView = subtitleView;
         /*
          * TODO:
          * While thumbnail is not loaded, show just a blue square.
@@ -105,8 +103,10 @@
         CGFloat thumbnailToLabelHeightRatioInverse = 1.0 - [VideoBoxView thumbnailToLabelHeightRatio];
         [titleView setFrame:CGRectMake(0, titleY, frame.size.width, frame.size.height * thumbnailToLabelHeightRatioInverse)];
         
-        [self addSubview:titleView];
         [self addSubview:thumbnail];
+        [self addSubview:subtitleView];
+        [self addSubview:titleView];
+        self->_boxType = VideoBoxVideoType;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapped)];
         [self addGestureRecognizer:tap];
     }
@@ -116,9 +116,22 @@
     return 5.0/6.0;
 }
 -(void)tapped {
+    if (_boxType == VideoBoxPlaylistType) {
+        NSString *playlistId = _playlistId;
+        if (playlistId) {
+            NSLog(@"Getting videos in playlist...");
+            [InvidiousAPIManager playlistWithId:playlistId completion:^(NSDictionary * _Nullable response, NSError * _Nullable _err) {
+                dispatch_async(dispatch_get_main_queue(), ^(void){
+                    YTPlaylistController *playlistController = [[YTPlaylistController alloc]initWithAPIResponse:response];
+                    [navigationController pushViewController:playlistController animated:YES];
+                });
+            }];
+        }
+        return;
+    }
     NSString *videoId = _videoId;
     if (videoId) {
-        NSLog(@"Getting video URL...\n");
+        NSLog(@"Getting video URL...");
         [InvidiousAPIManager hlsURLWithVideoId:videoId completion:^(NSString *hlsURL){
             dispatch_async(dispatch_get_main_queue(), ^(void){
                 NSURL *videoURL = [NSURL URLWithString:hlsURL];
