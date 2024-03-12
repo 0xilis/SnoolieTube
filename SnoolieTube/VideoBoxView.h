@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 typedef enum VideoBoxType_t {
     VideoBoxVideoType,
     VideoBoxPlaylistType,
+    VideoBoxBookmarkVideoType,
+    VideoBoxBookmarkPlaylistType,
 } VideoBoxType;
 
 @interface VideoBoxView : UIView
@@ -24,6 +26,7 @@ typedef enum VideoBoxType_t {
 @property (readwrite) VideoBoxType boxType;
 @property (nonatomic, readwrite) NSString *videoId;
 @property (nonatomic, readwrite) NSString *playlistId;
+@property (readwrite) NSURL *thumbnailURL;
 -(instancetype)initDebug;
 +(CGFloat)defaultHeight;
 -(instancetype) initDebugWithFrame:(CGRect)frame;
@@ -33,3 +36,5 @@ typedef enum VideoBoxType_t {
 @end
 
 NS_ASSUME_NONNULL_END
+
+uint64_t getFreeDiskspaceManual_do_not_call(void);

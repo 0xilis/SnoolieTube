@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(instancetype)initWithFrame:(CGRect)frame;
 -(void)emptyVideoBoxes;
 -(void)resizeForVideos;
--(void)newVideoBoxWithTitle:(NSString *)title videoId:(NSString *)videoId author:(NSString *)author thumbnailURL:(NSURL *)thumbnailURL;
+-(void)newVideoBoxWithTitle:(NSString *)title videoId:(NSString *)videoId author:(NSString * _Nullable)author thumbnailURL:(NSURL *)thumbnailURL;
 -(void)newVideoBoxPlaylistWithTitle:(NSString *)title playlistId:(NSString *)playlistId thumbnailURL:(NSURL *)thumbnailURL;
 @end
 

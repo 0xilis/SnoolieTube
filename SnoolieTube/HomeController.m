@@ -35,6 +35,38 @@
     [view addSubview:scrollView];
     _videos = scrollView;
     [view addSubview:searchBar];
+    
+    VideoBoxScrollView *bookmarkScrollView = [[VideoBoxScrollView alloc]initWithFrame:frame];
+    _bookmarkScrollList = bookmarkScrollView;
+    [bookmarkScrollView setHidden:YES];
+    [view addSubview:bookmarkScrollView];
+    
+    
+    CGFloat tabBarFrameY = frame.size.height * 0.9;
+    CGFloat tabBarFrameH = frame.size.height - tabBarFrameY;
+    CGRect tabBarFrame = CGRectMake(0, tabBarFrameY, frame.size.width, tabBarFrameH);
+    UITabBar *tabBar = [[UITabBar alloc]initWithFrame:tabBarFrame];
+    [tabBar setDelegate:self];
+    UITabBarItem *tabBarItemSearch = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemSearch tag:0];
+    /* tabBarItemChannels is local channel favorites. This tab will give a list of channels to go to, and by tapping on one, it will lead you to the channel. */
+    /*
+     Not yet implemented:
+    UITabBarItem *tabBarItemChannels = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemFavorites tag:1];
+     */
+    /* tabBarItemBookmarks is local playlists the user has saved. */
+    UITabBarItem *tabBarItemBookmarks = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemBookmarks tag:1];
+    /* tabBarItemDownloads are local downloads of audio/video */
+    /*
+     Not yet implemented:
+    UITabBarItem *tabBarItemDownloads = [[UITabBarItem alloc] initWithTabBarSystemItem:UITabBarSystemItemDownloads tag:4];
+     */
+    tabBar.items = @[
+        tabBarItemSearch,
+        tabBarItemBookmarks
+    ];
+    
+    tabBar.selectedItem = tabBarItemSearch;
+    [view addSubview:tabBar];
 }
 -(void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:YES animated:animated];
@@ -50,7 +82,8 @@
     VideoBoxScrollView *videos = [self videos];
     /* Empty previous search */
     [videos emptyVideoBoxes];
-    [[videos pendingLabel]setText:@"Searching..."];
+    UILabel *pendingLabel = [videos pendingLabel];
+    [pendingLabel setText:@"Searching..."];
     
     /* Search! */
     [InvidiousAPIManager search:[searchBar text] completion:^(NSArray *response, NSError *err){
@@ -94,5 +127,57 @@
             }
         });
     }];
+}
+-(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item {
+    NSInteger selectedTag = tabBar.selectedItem.tag;
+    if (selectedTag == 0) {
+        /* Search */
+        [self.searchBar setHidden:NO];
+        VideoBoxScrollView *bookmarksView = [self bookmarkScrollList];
+        if (bookmarksView) {
+            [bookmarksView setHidden:YES];
+        }
+        [self.videos setHidden:NO];
+    } else {
+        /* Local Playlists / Bookmarks */
+        [self.searchBar setHidden:YES];
+        [self.videos setHidden:YES];
+        
+        VideoBoxScrollView *bookmarksView = _bookmarkScrollList;
+        if (!bookmarksView) {
+            bookmarksView = [[VideoBoxScrollView alloc]initWithFrame:[self.view frame]];
+            [self.view addSubview:bookmarksView];
+            _bookmarkScrollList = bookmarksView;
+        }
+        [bookmarksView emptyVideoBoxes];
+        [bookmarksView setHidden:NO];
+        NSString *documentDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+        NSString *bookmarksPath = [documentDir stringByAppendingPathComponent:@"local_playlists.plist"];
+        NSDictionary *localPlaylists = [NSDictionary dictionaryWithContentsOfFile:bookmarksPath];
+        if (localPlaylists) {
+            NSArray *bookmarks = localPlaylists[@"bookmarks"];
+            NSLog(@"here: %@",bookmarks);
+            for (NSDictionary *content in bookmarks) {
+                NSString *type = content[@"type"];
+                if ([@"video" isEqualToString:type]) {
+                    NSURL *videoURL = nil;
+                    NSString *urlString = content[@"thumbnailURL"];
+                    if (urlString) {
+                        videoURL = [NSURL URLWithString:urlString];
+                    }
+                    [bookmarksView newVideoBoxWithTitle:content[@"title"] videoId:content[@"videoId"] author:nil thumbnailURL:videoURL];
+                    [[bookmarksView videoBoxes]lastObject].boxType = VideoBoxBookmarkVideoType;
+                } else if ([@"playlist" isEqualToString:type]) {
+                    NSURL *playlistThumbnailURL = nil;
+                    NSString *playlistThumbnailString = content[@"thumbnailURL"];
+                    if (playlistThumbnailString) {
+                        playlistThumbnailURL = [NSURL URLWithString:playlistThumbnailString];
+                    }
+                    [bookmarksView newVideoBoxPlaylistWithTitle:content[@"title"] playlistId:content[@"playlistId"] thumbnailURL:playlistThumbnailURL];
+                    [[bookmarksView videoBoxes]lastObject].boxType = VideoBoxBookmarkPlaylistType;
+                }
+            }
+        }
+    }
 }
 @end

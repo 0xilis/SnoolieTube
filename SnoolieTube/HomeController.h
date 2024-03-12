@@ -14,6 +14,7 @@
 
 @property (readwrite) UISearchBar *searchBar;
 @property (readwrite) VideoBoxScrollView *videos;
+@property (readwrite) VideoBoxScrollView *bookmarkScrollList;
 @end
 
 extern UINavigationController *navigationController;

@@ -36,13 +36,14 @@
     }
     return combinedVideoSize;
 }
--(void)newVideoBoxWithTitle:(NSString *)title videoId:(NSString *)videoId author:(NSString *)author thumbnailURL:(NSURL *)thumbnailURL {
+-(void)newVideoBoxWithTitle:(NSString *)title videoId:(NSString *)videoId author:(NSString * _Nullable)author thumbnailURL:(NSURL *)thumbnailURL {
     [_pendingLabel setHidden:YES];
     /* thumbnailURL currently ignored */
     VideoBoxView *box = [[VideoBoxView alloc]initWithFrame:CGRectMake(0, [self please_dont_call_yourself_getYOffset], [self frame].size.width, [VideoBoxView defaultHeight])];
     [box setTitle:title];
     [box setVideoId:videoId];
     [box setSubtitle:author];
+    [box setThumbnailURL:thumbnailURL];
     NSMutableArray *videoBoxes = _videoBoxes;
     if (!videoBoxes) {
         videoBoxes = [NSMutableArray new];
@@ -70,6 +71,7 @@
     [box setPlaylistId:playlistId];
     [box setBoxType:VideoBoxPlaylistType];
     [box setSubtitle:@"[Playlist]"];
+    [box setThumbnailURL:thumbnailURL];
     NSMutableArray *videoBoxes = _videoBoxes;
     if (!videoBoxes) {
         videoBoxes = [NSMutableArray new];
