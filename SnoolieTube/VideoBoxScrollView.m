@@ -12,16 +12,14 @@
 -(instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        UISearchBar *searchBar = [[UISearchBar alloc]init];
-        [searchBar setPlaceholder:@"Search for \"Lemon Demon\"..."];
-        /* Probably a bad idea to have the search bar in the scoll view since then a user will need to scroll up to search but ah well */
-        int searchBarHeight = 100;
-        [searchBar setFrame:CGRectMake(0, 0, frame.size.width, searchBarHeight)];
-        [searchBar setDelegate:self];
-        [self addSubview:searchBar];
-        self->_searchBar = searchBar;
-        [self setContentSize:CGSizeMake(frame.size.width, searchBarHeight)];
+        [self setContentSize:CGSizeMake(frame.size.width, 0)];
         self->_videoBoxes = [NSMutableArray new];
+        CGFloat middle = (frame.size.height / 2) - frame.origin.y;
+        UILabel *pendingLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, middle, frame.size.width, 100)];
+        [pendingLabel setText:@"No results."];
+        [pendingLabel setTextAlignment:NSTextAlignmentCenter];
+        [self addSubview:pendingLabel];
+        self->_pendingLabel = pendingLabel;
     }
     return self;
 }
@@ -36,9 +34,10 @@
     if (videoBoxes) {
         combinedVideoSize = [VideoBoxView defaultHeight] * [videoBoxes count];
     }
-    return combinedVideoSize + [[self searchBar]frame].size.height;
+    return combinedVideoSize;
 }
 -(void)newVideoBoxWithTitle:(NSString *)title videoId:(NSString *)videoId thumbnailURL:(NSURL *)thumbnailURL {
+    [_pendingLabel setHidden:YES];
     /* thumbnailURL currently ignored */
     VideoBoxView *box = [[VideoBoxView alloc]initWithFrame:CGRectMake(0, [self please_dont_call_yourself_getYOffset], [self frame].size.width, [VideoBoxView defaultHeight])];
     [box setTitle:title];
@@ -67,6 +66,9 @@
     }
     /* Hopefully ARC knows to free _videoBoxes... */
     _videoBoxes = [NSMutableArray new];
+    UILabel *pendingLabel = _pendingLabel;
+    [pendingLabel setHidden:NO];
+    [pendingLabel setText:@"No results."];
 }
 -(void)resizeForVideos {
     /*
@@ -88,58 +90,7 @@
     if (videoBoxes) {
         combinedVideoSize = [VideoBoxView defaultHeight] * [videoBoxes count];
     }
-    [self setContentSize:CGSizeMake([self frame].size.width, combinedVideoSize + [[self searchBar]frame].size.height)];
-}
--(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-    [self.searchBar endEditing:YES];
-}
--(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [self.searchBar endEditing:YES];
-    /* Empty previous search */
-    [self emptyVideoBoxes];
-    
-    /* TODO: Run this on background thread properly in the future */
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setHTTPMethod:@"GET"];
-    NSString *urlEnccodedSearchText = [[searchBar text]stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
-    NSString *searchString = [NSString stringWithFormat:@"https://vid.puffyan.us/api/v1/search?q=%@",urlEnccodedSearchText];
-    [request setURL:[NSURL URLWithString:searchString]];
-    NSError *error = nil;
-    NSHTTPURLResponse *responseCode = nil;
-    
-    [request setValue:@"application/xml; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:@"*" forHTTPHeaderField:@"Access-Control-Allow-Origin"];
-    
-    NSData *oResponseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&responseCode error:&error];
-    
-    NSArray *response = [NSJSONSerialization JSONObjectWithData:oResponseData options:kNilOptions error:nil];
-    
-    //NSLog(@"response: %@",response);
-    
-    unsigned int limitVideoBox = 10;
-    
-    unsigned int i = 0;
-    
-    for (NSDictionary *content in response) {
-        NSString *type = content[@"type"];
-        if ([@"video" isEqualToString:type]) {
-            if (i < limitVideoBox) {
-                NSURL *videoURL = nil;
-                NSArray *videoThumbnails = content[@"videoThumbnails"];
-                if (videoThumbnails) {
-                    NSDictionary *hqThumbnail = videoThumbnails[0];
-                    if (hqThumbnail) {
-                        NSString *urlString = hqThumbnail[@"url"];
-                        if (urlString) {
-                            videoURL = [NSURL URLWithString:urlString];
-                        }
-                    }
-                }
-                [self newVideoBoxWithTitle:content[@"title"] videoId:content[@"videoId"] thumbnailURL:videoURL];
-                i++;
-            }
-        }
-    }
+    [self setContentSize:CGSizeMake([self frame].size.width, combinedVideoSize)];
 }
 
 @end

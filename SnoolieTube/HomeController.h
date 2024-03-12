@@ -6,10 +6,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "VideoBoxScrollView.h"
 
-@interface HomeController : UIViewController <UISearchBarDelegate>
+@class VideoBoxScrollView; /* FOR SOME REASON XCODE IS NOT RECOGNIZING THE HEADER ??? */
+
+@interface HomeController : UIViewController
 
 @property (readwrite) UISearchBar *searchBar;
+@property (readwrite) VideoBoxScrollView *videos;
 @end
 
 extern UINavigationController *navigationController;

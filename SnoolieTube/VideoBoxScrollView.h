@@ -14,9 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VideoBoxScrollView : UIScrollView
 
 @property (readwrite) NSMutableArray <VideoBoxView *>*videoBoxes;
-@property (readwrite) UISearchBar *searchBar;
 -(void)addVideoBox:(VideoBoxView *)videoBox;
 -(instancetype)initWithFrame:(CGRect)frame;
+-(void)emptyVideoBoxes;
+-(void)resizeForVideos;
+-(void)newVideoBoxWithTitle:(NSString *)title videoId:(NSString *)videoId thumbnailURL:(NSURL *)thumbnailURL;
+@property (readwrite) BOOL loading;
+@property (readwrite) UILabel *pendingLabel;
 @end
 
 NS_ASSUME_NONNULL_END
